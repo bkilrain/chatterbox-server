@@ -174,7 +174,7 @@ $(document).ready(function () {
 
   });
   $('#roomSelect').val('lobby');
-  setInterval(app.fetch, 1000);
+  // setInterval(app.fetch, 1000);
   
 });
 

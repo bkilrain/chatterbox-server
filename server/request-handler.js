@@ -18,6 +18,9 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+var allRecentMessages = {};
+allRecentMessages['results'] = [];
+
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -27,17 +30,34 @@ var requestHandler = function(request, response) {
   //
   // Documentation for both request and response can be found in the HTTP section at
   // http://nodejs.org/documentation/api/
-
   // Do some basic logging.
   //
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
-
   // The outgoing status.
   var statusCode = 200;
 
+  if (request.method === 'POST') {
+    request.setEncoding('utf8');
+    var allData = '';
+    request.on('data', function(chunk) {
+      allData += chunk;
+    });
+    // potentially need to store allData somewhere
+    request.on('end', function() {
+      allRecentMessages.results.push(allData);
+      console.log(allRecentMessages);
+    });
+  }
+
+  if (request.method === 'GET') {
+    var chunk = JSON.stringify(allRecentMessages);
+    response.write(chunk);
+    console.log(chunk);
+    response.end();
+  }
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
 
