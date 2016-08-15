@@ -2,7 +2,7 @@
 
 var app = {};
 
-app.server = 'https://api.parse.com/1/classes/messages';
+app.server = 'http://127.0.0.1:3000/classes/messages';
 
 app.friends = {};
 
@@ -15,7 +15,7 @@ app.init = function () {
 
 app.send = function (message) {
   $.ajax({
-    url: 'https://api.parse.com/1/classes/messages',
+    url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -32,12 +32,12 @@ app.send = function (message) {
 
 app.fetch = function () {
   $.ajax({
-    url: 'https://api.parse.com/1/classes/messages',
+    url: app.server,
     type: 'GET',
     contentType: 'application/json',
     success: function (data) {
       $('#chats').html('');
-      var arr = data.results;
+      var arr = data.results || [];
       for ( var i = 0; i < arr.length; i++) {
         if (app.rooms[arr[i].roomname] === undefined) {
           app.rooms[arr[i].roomname] = true;
@@ -72,7 +72,7 @@ app.clearMessages = function () {
 
 };
 
-function timeSince(date) {
+var timeSince = function(date) {
 
   var seconds = Math.floor((new Date() - date) / 1000);
 
@@ -98,7 +98,7 @@ function timeSince(date) {
     return interval + " minutes";
   }
   return Math.floor(seconds) + " seconds";
-}
+};
 
 
 app.addMessage = function (message) {
