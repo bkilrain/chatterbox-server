@@ -18,6 +18,7 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+
 var allRecentMessages = {};
 allRecentMessages['results'] = [];
 
@@ -37,7 +38,10 @@ var requestHandler = function(request, response) {
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   // The outgoing status.
+  var headers = defaultCorsHeaders;
+  headers['Content-Type'] = 'text/plain';
   var statusCode = 200;
+  response.writeHead(statusCode, headers);
 
   if (request.method === 'POST') {
     request.setEncoding('utf8');
@@ -55,21 +59,19 @@ var requestHandler = function(request, response) {
   if (request.method === 'GET') {
     var chunk = JSON.stringify(allRecentMessages);
     response.write(chunk);
-    console.log(chunk);
     response.end();
   }
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
+  
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+  
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -78,8 +80,13 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  response.end();
 };
+
+
+
+
+
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
 // This code allows this server to talk to websites that
@@ -88,7 +95,7 @@ var requestHandler = function(request, response) {
 // Your chat client is running from a url like file://your/chat/client/index.html,
 // which is considered a different domain.
 //
-// Another way to get around this restriction is to serve you chat
+// Another way to get around this restriction is to serve your chat
 // client from this domain by setting up static file serving.
 
 
