@@ -43,12 +43,13 @@ var requestHandler = function(request, response) {
   var statusCode = 200;
 
   if (request.url !== '/classes/messages') {
-    statusCode = 404;
-    response.writeHead(statusCode, headers);
+    response.statusCode = 404;
+    response.statusMessage = 'Not found';
+    response.writeHead(404, headers);
+    response.write('error 404');
     response.end();
-  }
-
-  if (request.method === 'POST') {
+    
+  } else if (request.method === 'POST') {
     request.setEncoding('utf8');
     var allData = '';
     request.on('data', function(chunk) {
@@ -61,10 +62,9 @@ var requestHandler = function(request, response) {
       allRecentMessages.results.push(JSON.parse(allData));
       console.log(allRecentMessages);
     });
-  }
-
-  if (request.method === 'GET') {
+  } else if (request.method === 'GET') {
     response.writeHead(statusCode, headers);
+    // console.log(request.statusCode)
     var chunk = JSON.stringify(allRecentMessages);
     response.write(chunk);
     response.end();
