@@ -2,7 +2,7 @@
 
 var app = {};
 
-app.server = 'http://127.0.0.1:3000/classes/messages';
+app.server = 'http://127.0.0.1:3000';
 
 app.friends = {};
 
@@ -15,7 +15,7 @@ app.init = function () {
 
 app.send = function (message) {
   $.ajax({
-    url: app.server,
+    url: app.server + '/send',
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -32,7 +32,7 @@ app.send = function (message) {
 
 app.fetch = function () {
   $.ajax({
-    url: app.server,
+    url: app.server + '/classes/messages',
     type: 'GET',
     contentType: 'application/json',
     success: function (data) {

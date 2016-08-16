@@ -32,16 +32,21 @@ var requestHandler = function(request, response) {
   // Documentation for both request and response can be found in the HTTP section at
   // http://nodejs.org/documentation/api/
   // Do some basic logging.
-  //
+  console.log(request.url);
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   // The outgoing status.
   var headers = defaultCorsHeaders;
-  headers['Content-Type'] = 'text/plain';
+  headers['Content-Type'] = 'application/json';
   var statusCode = 200;
-  response.writeHead(statusCode, headers);
+
+  if (request.url !== '/classes/messages') {
+    statusCode = 404;
+    response.writeHead(statusCode, headers);
+    response.end();
+  }
 
   if (request.method === 'POST') {
     request.setEncoding('utf8');
@@ -49,20 +54,25 @@ var requestHandler = function(request, response) {
     request.on('data', function(chunk) {
       allData += chunk;
     });
+    statusCode = 201;
+    response.writeHead(statusCode, headers);
     // potentially need to store allData somewhere
     request.on('end', function() {
-      allRecentMessages.results.push(allData);
+      allRecentMessages.results.push(JSON.parse(allData));
       console.log(allRecentMessages);
     });
   }
 
   if (request.method === 'GET') {
+    response.writeHead(statusCode, headers);
     var chunk = JSON.stringify(allRecentMessages);
     response.write(chunk);
     response.end();
-  }
+  } 
+
   // See the note below about CORS headers.
 
+  response.writeHead(statusCode, headers);
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
