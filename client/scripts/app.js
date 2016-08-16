@@ -2,7 +2,7 @@
 
 var app = {};
 
-app.server = 'http://127.0.0.1:3000';
+app.server = 'http://127.0.0.1:3000/classes/messages';
 
 app.friends = {};
 
@@ -15,12 +15,12 @@ app.init = function () {
 
 app.send = function (message) {
   $.ajax({
-    url: app.server + '/send',
+    url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
     success: function (data) {
-      console.log('chatterbox: Message sent');
+      console.log('chatterbox: Message sent', JSON.stringify(message));
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -32,7 +32,7 @@ app.send = function (message) {
 
 app.fetch = function () {
   $.ajax({
-    url: app.server + '/classes/messages',
+    url: app.server,
     type: 'GET',
     contentType: 'application/json',
     success: function (data) {
