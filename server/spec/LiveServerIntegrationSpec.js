@@ -73,5 +73,50 @@ describe('server', function() {
     });
   });
 
+  it('Should add "createdAt" property to each incoming message', function(done) {
+    var requestParams = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: {
+        username: 'Us',
+        message: 'Please give me the time'}
+    };
+
+    request(requestParams, function(error, response, body) {
+      request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
+        var messages = JSON.parse(body).results;
+        expect(messages[0].createdAt).to.exist;
+        done();
+      });
+    });
+  });
+
+  it('should send most recent message at beginning of results array', function(done) {
+    var requestParams1 = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: {
+        username: 'number 1',
+        message: 'this is the first message sent'}
+    };
+
+    var requestParams2 = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: {
+        username: 'number 2',
+        message: 'this is the second message sent'}
+    };
+
+
+    request(requestParams1, function(error, response, body) {
+    });
+    request(requestParams2, function(error, response, body) {
+    });
+
+    request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
+      var messages = JSON.parse(body).results;
+      expect(messages[0].username).to.equal('number 2');
+      done();
+    });
+  });
+
 
 });

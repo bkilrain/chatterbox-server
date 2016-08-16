@@ -19,8 +19,7 @@ var defaultCorsHeaders = {
 };
 
 
-var allRecentMessages = {};
-allRecentMessages['results'] = [];
+var allRecentMessages = {'results': []};
 
 var requestHandler = function(request, response) {
  
@@ -29,14 +28,12 @@ var requestHandler = function(request, response) {
 //DEFAULT HEADERS
   var headers = defaultCorsHeaders;
   headers['Content-Type'] = 'application/json';
-  var statusCode = 200;
 
 //UKNOWN ENDPOINT - STATUS CODE 404
   if (request.url !== '/classes/messages') {
     response.statusCode = 404;
     response.statusMessage = 'Not found';
     response.writeHead(404, headers);
-    // response.write('error 404');
     response.end('error 404');
 
 //POST REQUEST - STATUS CODE 201
@@ -46,10 +43,12 @@ var requestHandler = function(request, response) {
     request.on('data', function(chunk) {
       allData += chunk;
     });
-    statusCode = 201;
-    response.writeHead(statusCode, headers);
+    response.writeHead(201, headers);
     request.on('end', function() {
-      allRecentMessages.results.push(JSON.parse(allData));
+      var jsonData = JSON.parse(allData);
+      jsonData.createdAt = new Date();
+      console.log(jsonData);
+      allRecentMessages.results.unshift(jsonData);
     });
     response.end('Successfully posted Data');
 
@@ -60,7 +59,10 @@ var requestHandler = function(request, response) {
     var chunk = JSON.stringify(allRecentMessages);
     response.end(chunk);
 
-  } 
+  } else if (request.method === 'OPTIONS') {
+    response.writeHead(200, headers);
+    response.end();
+  }
 
 };
 

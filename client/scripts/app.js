@@ -18,7 +18,7 @@ app.send = function (message) {
     url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
-    contentType: 'application/json',
+    dataType: 'text',
     success: function (data) {
       console.log('chatterbox: Message sent', JSON.stringify(message));
     },
@@ -174,7 +174,7 @@ $(document).ready(function () {
 
   });
   $('#roomSelect').val('lobby');
-  // setInterval(app.fetch, 1000);
+  setInterval(app.fetch, 1000);
   
 });
 
